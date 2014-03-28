@@ -19,11 +19,11 @@ our $VERSION = '0.02';
 =head1 SYNOPSIS
 
 Fortune::WWW::Postillion gives you fortune cookies from the newsticker archive
-of the webside C<http://www.der-postillion.com>. 
+of the webside C<http://www.der-postillion.com>.
 
     use Fortune::WWW::Postillion;
 
-    
+
     my $random_cookie = cookie();
     my $third_cookie  = cookie(3);
 
@@ -43,7 +43,7 @@ sub start_handler
         $self->handler(text => sub{$text = shift; if ($text =~ m/\+\+\+ ([^+]+) \+\+\+/) { push(@text, $1)}},"dtext");
 }
 
-sub text_handler 
+sub text_handler
 {
 
 }
@@ -75,15 +75,15 @@ sub cookie
         # Create parser object
         my $parser = HTML::Parser->new();
         $parser->handler(start => \&start_handler,"tagname,attr,self");
-        
+
         $parser->parse($content);
         $parser->eof;
         if (not $num_cookie) {
                 $num_cookie = int(rand(@text)) + 1;
         }
-        
+
         return $text[($num_cookie-1) % int @text];
-        
+
 }
 
 =head1 AUTHOR
