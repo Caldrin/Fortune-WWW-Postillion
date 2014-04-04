@@ -5,6 +5,9 @@ use strict;
 use warnings;
 use WWW::Mechanize;
 use HTML::Parser;
+use base 'Exporter::Tiny';
+our @EXPORT_OK = qw/cookie/;
+use Mojo::UserAgent;
 
 =head1 NAME
 
@@ -14,7 +17,7 @@ Fortune::WWW::Postillion - Get fortune cookies from http://www.der-postillion.co
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -34,18 +37,13 @@ of the webside C<http://www.der-postillion.com>.
 
 our @text;
 
-sub start_handler
-{
-        return if(shift ne 'p');
-        my ($class) = shift->{href};
-        my $self = shift;
-        my $text;
-        $self->handler(text => sub{$text = shift; if ($text =~ m/\+\+\+ ([^+]+) \+\+\+/) { push(@text, $1)}},"dtext");
-}
 
 sub text_handler
 {
-
+        my ($self, $text) = @_;
+        if ($text =~ m/[+]+\s*(.+?)\s*[+]+/) {
+                push @text, $1;
+        }
 }
 
 =head1 SUBROUTINES
@@ -70,13 +68,14 @@ sub cookie
 {
         my ($num_cookie) = @_;
         my $url = 'http://www.der-postillon.com/search/label/Newsticker';
-        my $mech = WWW::Mechanize->new();
-        my $content = $mech->get($url)->content;
+
+        my $ua = Mojo::UserAgent->new;
+        my $body = $ua->get($url)->res->body;
         # Create parser object
         my $parser = HTML::Parser->new();
-        $parser->handler(start => \&start_handler,"tagname,attr,self");
+        $parser->handler(text => \&text_handler);
 
-        $parser->parse($content);
+        $parser->parse($body);
         $parser->eof;
         if (not $num_cookie) {
                 $num_cookie = int(rand(@text)) + 1;
