@@ -41,7 +41,7 @@ our @text;
 sub text_handler
 {
         my ($self, $text) = @_;
-        if ($text =~ m/[+]+\s*(.+?)\s*[+]+/) {
+        if ($text =~ m/[+]{4}\s*(.+?)\s*[+]{4}/) {
                 push @text, $1;
         }
 }
