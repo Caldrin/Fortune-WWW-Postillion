@@ -24,7 +24,7 @@ our $VERSION = '0.03';
 Fortune::WWW::Postillion gives you fortune cookies from the newsticker archive
 of the webside C<http://www.der-postillion.com>.
 
-    use Fortune::WWW::Postillion;
+    use Fortune::WWW::Postillion 'cookie';
 
 
     my $random_cookie = cookie();
